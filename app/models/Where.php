@@ -7,7 +7,6 @@ use app\models\SqlFragment;
 
 class Where extends Command
 {
-
     public string $column;
     public string $parameter;
     public string $operator;

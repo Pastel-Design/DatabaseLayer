@@ -5,24 +5,17 @@ namespace app\models;
 
 use app\models\SqlFragment;
 
-class SelectColumns extends Command
+class SelectTables extends Command
 {
     public array $tables;
-    public array $columns;
 
-    public function __construct($tables, $columns)
+    public function __construct($tables)
     {
         $this->tables = $tables;
-        $this->columns = $columns;
         $this->sqlFragment = $this->generateSql();
     }
-
     public function generateSql(){
-        $sql = "SELECT ";
-        foreach ($this->columns as $column){
-            $sql.= $column.",";
-        }
-        $sql .= " FROM ";
+        $sql = "SELECT * FROM ";
         foreach ($this->tables as $table){
             $sql.= $table.",";
         }

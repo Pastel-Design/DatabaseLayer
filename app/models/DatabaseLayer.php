@@ -4,7 +4,8 @@ namespace app\models;
 
 use app\models\DatabaseStatement as DatabaseStatement;
 use app\models\SelectColumns as SelectColumns;
-use app\models\SelectTable as SelectTable;
+use app\models\SelectTables as SelectTables;
+use app\models\Where as Where;
 use app\config\DbConfig;
 use app\router\Router;
 use PDO;
@@ -80,26 +81,26 @@ class DatabaseLayer
     }
 
     /**
-     * @param $tableName
+     * @param array $tables
      *
      * @return $this
      */
-    public function selectTable(string $tableName)
+    public function selectTables(array $tables)
     {
-        $this->statement->pushCommands(new SelectTable($tableName));
+        $this->statement->pushCommands(new SelectTables($tables));
         return $this;
     }
 
     /**
-     * @param string $tableName
+     * @param array  $tables
      *
      * @param array  $columns
      *
      * @return $this
      */
-    public function selectColumns(string $tableName, array $columns)
+    public function selectColumns(array $tables, array $columns)
     {
-        $this->statement->pushCommands(new SelectColumns($tableName, $columns));
+        $this->statement->pushCommands(new SelectColumns($tables, $columns));
         return $this;
     }
 
