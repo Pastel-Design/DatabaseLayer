@@ -20,6 +20,7 @@ class SelectTables extends Command
             $sql.= $table.",";
         }
         $sql = substr($sql, 0, -1);
+        $sql.=" ";
         return new SqlFragment($sql,[]);
     }
 }

@@ -29,11 +29,13 @@ class HomeController extends Controller
         $product = new ProductManager();
         //var_dump($product->SelectProducts());
         echo("<br>");
-        var_dump($product->SelectProductsByName("Omen"));
+        //var_dump($product->SelectProductsByName("Omen"));
         echo("<br>");
         //var_dump($product->SelectProductsPrice());
         echo("<br>");
         //var_dump($product->SelectProductsPriceFiltered(100));
+        echo("<br>");
+        var_dump($product->selectProductWithImages(1));
 
 
         $this->head['page_title'] = "";

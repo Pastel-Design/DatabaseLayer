@@ -37,6 +37,7 @@ class ProductManager
     }
     public function selectProductWithImages($productId){
         $product = new DatabaseLayer;
-        $product->selectColumns(["product"], [""]);
+        $product->selectColumns(["product"], ["product.name","i.name"])->join("image_has_product ihp","ihp.product_id","product.id")->join("image i","ihp.image_id","i.id")->where("product.id",$productId);
+        return $product->execute();
     }
 }

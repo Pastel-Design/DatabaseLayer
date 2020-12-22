@@ -92,9 +92,9 @@ class DatabaseLayer
     }
 
     /**
-     * @param array  $tables
+     * @param array $tables
      *
-     * @param array  $columns
+     * @param array $columns
      *
      * @return $this
      */
@@ -117,10 +117,34 @@ class DatabaseLayer
         return $this;
     }
 
+    public function join(string $table, string $parameter1, string $parameter2)
+    {
+        $this->statement->pushCommands(new Join($table,$parameter1,$parameter2));
+        return $this;
+    }
+
+    public function leftJoin(string $table, string $parameter1, string $parameter2)
+    {
+        $this->statement->pushCommands(new LeftJoin($table,$parameter1,$parameter2));
+        return $this;
+    }
+
+    public function rightJoin(string $table, string $parameter1, string $parameter2)
+    {
+        $this->statement->pushCommands(new RightJoin($table,$parameter1,$parameter2));
+        return $this;
+    }
+
+    public function outerJoin(string $table, string $parameter1, string $parameter2)
+    {
+        $this->statement->pushCommands(new OuterJoin($table,$parameter1,$parameter2));
+        return $this;
+    }
+
     public function execute()
     {
-        var_dump($this->statement->body);
-        /*
+        //var_dump($this->statement->body);
+
         $preparedStmtBody = "";
         $preparedStmtVars = [];
         foreach ($this->statement->body as $command) {
@@ -134,6 +158,8 @@ class DatabaseLayer
         $result = $this->connection->prepare($preparedStmtBody);
         $result->execute($preparedStmtVars);
         return $result->fetchAll();
-        */
+
     }
+
+
 }
