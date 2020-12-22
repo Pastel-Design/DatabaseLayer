@@ -21,7 +21,7 @@ class SqlFragment
         $this->vars = $vars;
     }
 
-    public function render(){
+    public function getSql(){
         return $this->sql;
     }
 
