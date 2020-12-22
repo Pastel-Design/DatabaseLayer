@@ -5,7 +5,7 @@ namespace app\models;
 
 use app\models\SqlFragment;
 
-class Where
+class Where extends Command
 {
 
     public string $column;
@@ -24,6 +24,7 @@ class Where
         $this->column = $column;
         $this->parameter = $parameter;
         $this->operator = $operator;
+        $this->sqlFragment = $this->generateSql();
     }
 
     public function generateSql()

@@ -5,7 +5,7 @@ namespace app\models;
 
 use app\models\SqlFragment;
 
-class SelectColumns
+class SelectColumns extends Command
 {
     public string $table;
     public array $columns;
@@ -14,6 +14,7 @@ class SelectColumns
     {
         $this->table = $tableName;
         $this->columns = $columns;
+        $this->sqlFragment = $this->generateSql();
     }
 
     public function generateSql(){
