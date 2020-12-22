@@ -3,31 +3,15 @@
 
 namespace app\models;
 
-use app\models\SqlFragment;
 
-class SelectColumns extends Command
+class SelectColumnsDistinct extends SelectColumns
 {
-    public array $tables;
-    public array $columns;
-
-    /**
-     * SelectColumns constructor.
-     *
-     * @param $tables
-     * @param $columns
-     */
-    public function __construct($tables, $columns)
-    {
-        $this->tables = $tables;
-        $this->columns = $columns;
-        $this->sqlFragment = $this->generateSql();
-    }
 
     /**
      * @return SqlFragment
      */
     public function generateSql(){
-        $sql = "SELECT ";
+        $sql = "SELECT DISTINCT ";
         foreach ($this->columns as $column){
             $sql.= $column.",";
         }

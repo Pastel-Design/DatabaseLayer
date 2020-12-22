@@ -108,6 +108,30 @@ class DatabaseLayer
     }
 
     /**
+     * @return $this
+     * @throws DatabaseLayerException
+     */
+    public function distinct()
+    {
+        $lastCommand = end($this->statement->body);
+        $lastCommandName = (array_reverse(explode("\\", get_class($lastCommand)))[0]);
+        switch ($lastCommandName) {
+            case "SelectColumns":
+                $newCommand = new SelectColumnsDistinct($lastCommand->tables, $lastCommand->columns);
+                array_pop($this->statement->body);
+                $this->statement->pushCommands($newCommand);
+                return $this;
+            case "SelectTables":
+                $newCommand = new SelectTablesDistinct($lastCommand->tables);
+                array_pop($this->statement->body);
+                $this->statement->pushCommands($newCommand);
+                return $this;
+            default:
+                throw new DatabaseLayerException("Not function must be called only after where function");
+        }
+    }
+
+    /**
      * @param string $column
      * @param string $parameter
      * @param string $operator
@@ -117,6 +141,50 @@ class DatabaseLayer
     public function where(string $column, string $parameter, string $operator = "")
     {
         $this->statement->pushCommands(new Where($column, $parameter, $operator));
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws DatabaseLayerException
+     */
+    public function not()
+    {
+        $lastCommand = end($this->statement->body);
+        $lastCommandName = (array_reverse(explode("\\", get_class($lastCommand)))[0]);
+        if ($lastCommandName === "Where") {
+            $newCommand = new NotWhere($lastCommand->column, $lastCommand->parameter, $lastCommand->operator);
+            array_pop($this->statement->body);
+            $this->statement->pushCommands($newCommand);
+            return $this;
+        } else {
+            throw new DatabaseLayerException("Not function must be called only after where function");
+        }
+    }
+
+    /**
+     * @param string $column
+     * @param string $parameter
+     * @param string $operator
+     *
+     * @return $this
+     */
+    public function and(string $column, string $parameter, string $operator = "")
+    {
+        $this->statement->pushCommands(new AndWhere($column, $parameter, $operator));
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     * @param string $parameter
+     * @param string $operator
+     *
+     * @return $this
+     */
+    public function or(string $column, string $parameter, string $operator = "")
+    {
+        $this->statement->pushCommands(new OrWhere($column, $parameter, $operator));
         return $this;
     }
 
@@ -187,13 +255,13 @@ class DatabaseLayer
      */
     public function execute()
     {
-        //var_dump($this->statement->body);
+        var_dump($this->statement->body);
 
         $preparedStmtBody = "";
         $preparedStmtVars = [];
         foreach ($this->statement->body as $command) {
             $SqlFragment = $command->generateSql();
-            $preparedStmtBody .= $SqlFragment->render();
+            $preparedStmtBody .= $SqlFragment->getSql();
             $vars = $SqlFragment->getVars();
             foreach ($vars as $var) {
                 array_push($preparedStmtVars, $var);
@@ -201,7 +269,7 @@ class DatabaseLayer
         }
         $result = $this->connection->prepare($preparedStmtBody);
         $result->execute($preparedStmtVars);
-        switch($this->statement->fetchMethod){
+        switch ($this->statement->fetchMethod) {
             case "fetch":
                 return $result->fetch();
             case "fetchAll":
@@ -210,6 +278,4 @@ class DatabaseLayer
                 return false;
         }
     }
-
-
 }

@@ -33,9 +33,9 @@ class HomeController extends Controller
         echo("<br>");
         //var_dump($product->SelectProductsPrice());
         echo("<br>");
-        //var_dump($product->SelectProductsPriceFiltered(100));
+        var_dump($product->SelectProductsPriceFiltered(100,"omen"));
         echo("<br>");
-        var_dump($product->selectProductWithImages(1));
+        //var_dump($product->selectProductWithImages(1));
 
 
         $this->head['page_title'] = "";

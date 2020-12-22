@@ -45,11 +45,13 @@ class ProductManager
      * @param $limit
      *
      * @return array|false|mixed
+     * @throws DatabaseLayerException
      */
-    public function SelectProductsPriceFiltered($limit)
+    public function SelectProductsPriceFiltered($limit,$name)
     {
         $products = new DatabaseLayer;
-        $products->selectColumns(["product"], ["price"])->where("price",$limit,">");
+        $products->selectColumns(["product"], ["price"])->distinct()->where("price",$limit,"<")->or("name","%".$name."%","LIKE");
+        $products->setFetchMethod("fetchAll");
         return $products->execute();
     }
 
