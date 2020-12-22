@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use app\exceptions\DatabaseLayerException;
+
 require("../vendor/autoload.php");
 
 
@@ -35,9 +37,17 @@ class ProductManager
         $products->selectColumns(["product"], ["price"])->where("price",$limit,">");
         return $products->execute();
     }
+
+    /**
+     * @param $productId
+     *
+     * @return array|false|mixed
+     * @throws DatabaseLayerException
+     */
     public function selectProductWithImages($productId){
         $product = new DatabaseLayer;
         $product->selectColumns(["product"], ["product.name","i.name"])->join("image_has_product ihp","ihp.product_id","product.id")->join("image i","ihp.image_id","i.id")->where("product.id",$productId);
+        $product->setFetchMethod("fetchAll");
         return $product->execute();
     }
 }

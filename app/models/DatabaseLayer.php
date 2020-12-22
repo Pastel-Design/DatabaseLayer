@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\exceptions\DatabaseLayerException;
 use app\models\DatabaseStatement as DatabaseStatement;
 use app\models\SelectColumns as SelectColumns;
 use app\models\SelectTables as SelectTables;
@@ -10,7 +11,6 @@ use app\config\DbConfig;
 use app\router\Router;
 use PDO;
 use PDOException as PDOException;
-use ReflectionException;
 
 /**
  * Manager DatabaseLayer
@@ -119,28 +119,41 @@ class DatabaseLayer
 
     public function join(string $table, string $parameter1, string $parameter2)
     {
-        $this->statement->pushCommands(new Join($table,$parameter1,$parameter2));
+        $this->statement->pushCommands(new Join($table, $parameter1, $parameter2));
         return $this;
     }
 
     public function leftJoin(string $table, string $parameter1, string $parameter2)
     {
-        $this->statement->pushCommands(new LeftJoin($table,$parameter1,$parameter2));
+        $this->statement->pushCommands(new LeftJoin($table, $parameter1, $parameter2));
         return $this;
     }
 
     public function rightJoin(string $table, string $parameter1, string $parameter2)
     {
-        $this->statement->pushCommands(new RightJoin($table,$parameter1,$parameter2));
+        $this->statement->pushCommands(new RightJoin($table, $parameter1, $parameter2));
         return $this;
     }
 
     public function outerJoin(string $table, string $parameter1, string $parameter2)
     {
-        $this->statement->pushCommands(new OuterJoin($table,$parameter1,$parameter2));
+        $this->statement->pushCommands(new OuterJoin($table, $parameter1, $parameter2));
         return $this;
     }
 
+    /**
+     * @param $fetchMethod
+     *
+     * @throws DatabaseLayerException
+     */
+    public function setFetchMethod($fetchMethod)
+    {
+        $this->statement->setFetchMethod($fetchMethod);
+    }
+
+    /**
+     * @return array|false|mixed
+     */
     public function execute()
     {
         //var_dump($this->statement->body);
@@ -151,14 +164,20 @@ class DatabaseLayer
             $SqlFragment = $command->generateSql();
             $preparedStmtBody .= $SqlFragment->render();
             $vars = $SqlFragment->getVars();
-            foreach ($vars as $var){
+            foreach ($vars as $var) {
                 array_push($preparedStmtVars, $var);
             }
         }
         $result = $this->connection->prepare($preparedStmtBody);
         $result->execute($preparedStmtVars);
-        return $result->fetchAll();
-
+        switch($this->statement->fetchMethod){
+            case "fetch":
+                return $result->fetch();
+            case "fetchAll":
+                return $result->fetchAll();
+            default:
+                return false;
+        }
     }
 
 
