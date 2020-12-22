@@ -15,6 +15,9 @@ class DatabaseStatement
     public int $commandsCounter;
     public string $fetchMethod;
 
+    /**
+     * DatabaseStatement constructor.
+     */
     public function __construct()
     {
         $this->body = [];

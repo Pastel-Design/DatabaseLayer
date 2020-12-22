@@ -3,7 +3,7 @@
 
 namespace app\models;
 
-use app\models\SqlFragment;
+use app\models\SqlFragment as SqlFragment;
 
 class Where extends Command
 {
@@ -26,6 +26,9 @@ class Where extends Command
         $this->sqlFragment = $this->generateSql();
     }
 
+    /**
+     * @return SqlFragment
+     */
     public function generateSql()
     {
         if ($this->operator != "") {

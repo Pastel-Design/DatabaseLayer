@@ -10,6 +10,12 @@ class SelectColumns extends Command
     public array $tables;
     public array $columns;
 
+    /**
+     * SelectColumns constructor.
+     *
+     * @param $tables
+     * @param $columns
+     */
     public function __construct($tables, $columns)
     {
         $this->tables = $tables;
@@ -17,6 +23,9 @@ class SelectColumns extends Command
         $this->sqlFragment = $this->generateSql();
     }
 
+    /**
+     * @return \app\models\SqlFragment
+     */
     public function generateSql(){
         $sql = "SELECT ";
         foreach ($this->columns as $column){

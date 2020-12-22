@@ -19,6 +19,9 @@ use PDOException as PDOException;
  */
 class DatabaseLayer
 {
+    /**
+     * DatabaseLayer constructor.
+     */
     public function __construct()
     {
         $credentials = $this->initCredentials();
@@ -117,24 +120,52 @@ class DatabaseLayer
         return $this;
     }
 
+    /**
+     * @param string $table
+     * @param string $parameter1
+     * @param string $parameter2
+     *
+     * @return $this
+     */
     public function join(string $table, string $parameter1, string $parameter2)
     {
         $this->statement->pushCommands(new Join($table, $parameter1, $parameter2));
         return $this;
     }
 
+    /**
+     * @param string $table
+     * @param string $parameter1
+     * @param string $parameter2
+     *
+     * @return $this
+     */
     public function leftJoin(string $table, string $parameter1, string $parameter2)
     {
         $this->statement->pushCommands(new LeftJoin($table, $parameter1, $parameter2));
         return $this;
     }
 
+    /**
+     * @param string $table
+     * @param string $parameter1
+     * @param string $parameter2
+     *
+     * @return $this
+     */
     public function rightJoin(string $table, string $parameter1, string $parameter2)
     {
         $this->statement->pushCommands(new RightJoin($table, $parameter1, $parameter2));
         return $this;
     }
 
+    /**
+     * @param string $table
+     * @param string $parameter1
+     * @param string $parameter2
+     *
+     * @return $this
+     */
     public function outerJoin(string $table, string $parameter1, string $parameter2)
     {
         $this->statement->pushCommands(new OuterJoin($table, $parameter1, $parameter2));

@@ -24,6 +24,10 @@ class Join extends Command
         $this->parameter2 = $parameter2;
         $this->sqlFragment = $this->generateSql();
     }
+
+    /**
+     * @return SqlFragment
+     */
     public function generateSql()
     {
         $sql = "JOIN ".$this->table." ON ".$this->parameter1." = ".$this->parameter2." ";

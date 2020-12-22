@@ -9,11 +9,20 @@ class SelectTables extends Command
 {
     public array $tables;
 
+    /**
+     * SelectTables constructor.
+     *
+     * @param $tables
+     */
     public function __construct($tables)
     {
         $this->tables = $tables;
         $this->sqlFragment = $this->generateSql();
     }
+
+    /**
+     * @return \app\models\SqlFragment
+     */
     public function generateSql(){
         $sql = "SELECT * FROM ";
         foreach ($this->tables as $table){
