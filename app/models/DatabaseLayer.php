@@ -227,6 +227,14 @@ class DatabaseLayer extends DatabaseLayerCore
     {
         $this->statement->setFetchMethod($fetchMethod);
     }
+    /**
+     * @param $fetchMode
+     *
+     */
+    public function setFetchMode($fetchMode)
+    {
+        $this->statement->setFetchMode($fetchMode);
+    }
 
     /**
      * @return array|false|mixed
@@ -249,9 +257,9 @@ class DatabaseLayer extends DatabaseLayerCore
         $result->execute($preparedStmtVars);
         switch ($this->statement->fetchMethod) {
             case "fetch":
-                return $result->fetch();
+                return $result->fetch($this->statement->fetchMode);
             case "fetchAll":
-                return $result->fetchAll();
+                return $result->fetchAll($this->statement->fetchMode);
             default:
                 return false;
         }

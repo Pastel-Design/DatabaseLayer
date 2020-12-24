@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\config\DbConfig;
 use app\exceptions\DatabaseLayerException;
+use PDO;
 
 require("../vendor/autoload.php");
 
@@ -18,6 +19,8 @@ class ProductManager
     {
         $products = new DatabaseLayer(DbConfig::$credentials,DbConfig::$settings);
         $products->selectTables(["product"]);
+        $products->setFetchMethod(2);
+        $products->setFetchMode(PDO::FETCH_ASSOC);
         return $products->execute();
     }
 

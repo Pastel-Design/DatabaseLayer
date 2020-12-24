@@ -6,6 +6,7 @@ namespace app\models;
 
 use app\exceptions\DatabaseLayerException;
 use app\router\Router;
+use PDO;
 use ReflectionClass;
 use ReflectionException;
 
@@ -14,6 +15,7 @@ class DatabaseStatement
     public array $body;
     public int $commandsCounter;
     public string $fetchMethod;
+    public int $fetchMode = PDO::FETCH_BOTH;
 
     /**
      * DatabaseStatement constructor.
@@ -51,7 +53,6 @@ class DatabaseStatement
                     break;
                 default:
                     throw new DatabaseLayerException("Passed invalid fetch style");
-                    break;
             }
         } else {
             switch ($fetchMethod) {
@@ -63,8 +64,12 @@ class DatabaseStatement
                     break;
                 default:
                     throw new DatabaseLayerException("Passed invalid fetch style");
-                    break;
             }
         }
+    }
+
+    public function setFetchMode($fetchMode)
+    {
+        $this->fetchMode=$fetchMode;
     }
 }
