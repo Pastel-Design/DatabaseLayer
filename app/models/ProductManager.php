@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\config\DbConfig;
 use app\exceptions\DatabaseLayerException;
 
 require("../vendor/autoload.php");
@@ -11,10 +12,11 @@ class ProductManager
 {
     /**
      * @return array|false|mixed
+     * @throws DatabaseLayerException
      */
     public function SelectProducts()
     {
-        $products = new DatabaseLayer;
+        $products = new DatabaseLayer(DbConfig::$credentials,DbConfig::$settings);
         $products->selectTables(["product"]);
         return $products->execute();
     }

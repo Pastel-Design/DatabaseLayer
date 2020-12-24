@@ -9,6 +9,7 @@ use app\models\SelectTables as SelectTables;
 use app\models\Where as Where;
 use app\config\DbConfig;
 use app\router\Router;
+use Exception;
 use PDO;
 use PDOException as PDOException;
 
@@ -17,70 +18,47 @@ use PDOException as PDOException;
  *
  * @package app\models
  */
-class DatabaseLayer
+class DatabaseLayer extends DatabaseLayerCore
 {
     /**
      * DatabaseLayer constructor.
-     */
-    public function __construct()
-    {
-        $credentials = $this->initCredentials();
-        $this->connect($credentials);
-        $this->statement = new DatabaseStatement;
-    }
-
-    /**
-     * @var PDO $connection
-     */
-    public PDO $connection;
-
-    /**
-     * @var DatabaseStatement $statement
-     */
-    public DatabaseStatement $statement;
-
-    /**
-     * @var array $settings
-     */
-    protected array $settings = [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
-        PDO::ATTR_EMULATE_PREPARES => false,
-    ];
-
-    /**
-     * @return array
-     */
-    protected function initCredentials(): array
-    {
-        return ["database" => DbConfig::$database, "host" => DbConfig::$host, "password" => DbConfig::$pass, "user" => DbConfig::$username];
-    }
-
-    /**
-     * @param $credentials
      *
-     * @return bool
+     * @param array $credentials
+     * @param array $pdoSettings
+     *
+     * @throws DatabaseLayerException
      */
-    protected function connect($credentials): bool
+    public function __construct(array $credentials = [], array $pdoSettings = [])
     {
-        /**
-         * @var string $host
-         * @var string $database
-         * @var string $user
-         * @var string $password
-         */
-        extract($credentials);
-        try {
-            $this->connection = new PDO(
-                "mysql:host=$host;dbname=$database",
-                $user,
-                $password,
-                $this->settings
-            );
-        } catch (PDOException $exception) {
-            return false;
+        if (!empty($credentials)) {
+            if (!empty($pdoSettings)) {
+                $this->addSettings($pdoSettings);
+            }
+            $this->credentials = $this->initCredentials($credentials);
+            $this->connect();
+            $this->statement = new DatabaseStatement;
+        } else {
+            if (isset($_ENV["credentials"])) {
+                /**
+                 * @var $host
+                 * @var $database
+                 * @var $user
+                 * @var $password
+                 */
+                extract($_ENV["credentials"]);
+                if (isset($_ENV["pdoSettings"])) {
+                    if (!empty($_ENV["pdoSettings"])) {
+                        $this->addSettings($_ENV["pdoSettings"]);
+                    }
+                }
+                $this->credentials = $this->initCredentials($credentials);
+                $this->connect();
+                $this->statement = new DatabaseStatement;
+            }
+            else{
+                throw new DatabaseLayerException("You must set credentials either in constructor or php environment");
+            }
         }
-        return true;
     }
 
     /**

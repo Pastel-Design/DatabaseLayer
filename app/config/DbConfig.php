@@ -1,6 +1,9 @@
 <?php
 
 namespace app\config;
+
+use PDO;
+
 /**
  * Config DbConfig
  *
@@ -8,8 +11,15 @@ namespace app\config;
  */
 class DbConfig
 {
-    public static string $host = '127.0.0.1';
-    public static string $username = 'root';
-    public static string $pass = '';
-    public static string $database = 'mydb';
+    public static array $credentials = [
+        "host" => '127.0.0.1',
+        "user" => 'root',
+        "password" => '',
+        "database" => 'mydb'
+    ];
+    public static array $settings = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+        PDO::ATTR_EMULATE_PREPARES => false
+    ];
 }
